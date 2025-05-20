@@ -3,35 +3,37 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
     LayoutDashboard,
-    Cloud,
-    History,
-    Bell,
+    CalendarDays,
+    ListTodo,
+    ClipboardCheck,
     Users,
-    MessageSquare,
+    BarChart2,
     Settings,
     Globe,
     Menu,
     ChevronLeft,
     ChevronRight,
     LogOut,
-    BookOpen
+    FileText,
+    Briefcase,
+    FolderKanban
 } from 'lucide-react';
-import { useLanguage } from '@/i18n';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'; // Import Sheet components
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useAuth } from '../auth/auth-provider';
 
 interface AppLayoutProps {
     children: React.ReactNode;
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-    const { t, locale, changeLanguage } = useLanguage();
+    const { logout } = useAuth();
     const router = useRouter();
     const [isMounted, setIsMounted] = useState(false);
-    const [sidebarOpen, setSidebarOpen] = useState(false); // Set to false by default
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
@@ -57,14 +59,13 @@ export function AppLayout({ children }: AppLayoutProps) {
     }, []);
 
     const navItems = [
-        { href: '/dashboard', icon: <LayoutDashboard size={20} />, label: t('dashboard') },
-        { href: '/forecasts', icon: <Cloud size={20} />, label: t('forecasts') },
-        { href: '/historical', icon: <History size={20} />, label: t('historical') },
-        { href: '/alerts', icon: <Bell size={20} />, label: t('alerts') },
-        { href: '/farmers', icon: <Users size={20} />, label: t('farmers') },
-        { href: '/messages', icon: <MessageSquare size={20} />, label: t('messages') },
-        { href: '/training', icon: <BookOpen size={20} />, label: t('training') },
-        { href: '/settings', icon: <Settings size={20} />, label: t('settings') }
+        { href: '/dashboard', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+        { href: '/projects', icon: <Briefcase size={20} />, label: 'Projects' },
+        { href: '/workplans', icon: <ClipboardCheck size={20} />, label: 'Workplans' },
+        { href: '/tasks', icon: <ListTodo size={20} />, label: 'Tasks' },
+        { href: '/teams', icon: <Users size={20} />, label: 'Teams' },
+        { href: '/documents', icon: <FileText size={20} />, label: 'Documents' },
+        { href: '/settings', icon: <Settings size={20} />, label: 'Settings' }
     ];
 
     if (!isMounted) {
@@ -95,7 +96,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                         size="icon"
                         onClick={() => setSidebarOpen(!sidebarOpen)}
                         className="hidden md:flex"
-                        aria-label={sidebarOpen ? t('collapseSidebar') : t('expandSidebar')}
+                        aria-label={sidebarOpen ? 'Collapse Sidebar' : 'Expand Sidebar'}
                     >
                         {sidebarOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
                     </Button>
@@ -138,14 +139,18 @@ export function AppLayout({ children }: AppLayoutProps) {
                                 <Button
                                     variant="ghost"
                                     className={`w-full justify-start ${!sidebarOpen && !isMobile ? 'justify-center' : ''}`}
+                                    onClick={() => {
+                                        logout();
+                                        router.push('/login');
+                                    }}
                                 >
                                     <LogOut size={20} />
-                                    {(sidebarOpen || isMobile) && <span className="ml-3">{t('logout')}</span>}
+                                    {(sidebarOpen || isMobile) && <span className="ml-3">Logout</span>}
                                 </Button>
                             </TooltipTrigger>
                             {!sidebarOpen && !isMobile && (
                                 <TooltipContent side="right">
-                                    {t('logout')}
+                                    Logout
                                 </TooltipContent>
                             )}
                         </Tooltip>
@@ -162,7 +167,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                     variant="ghost"
                     size="icon"
                     className="md:hidden mr-2"
-                    aria-label={t('toggleSidebar')}
+                    aria-label="Toggle Sidebar"
                 >
                     <Menu size={20} />
                 </Button>
@@ -206,9 +211,13 @@ export function AppLayout({ children }: AppLayoutProps) {
                             <Button
                                 variant="ghost"
                                 className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/20"
+                                onClick={() => {
+                                    logout();
+                                    router.push('/login');
+                                }}
                             >
                                 <LogOut size={20} />
-                                <span className="ml-3">{t('logout')}</span>
+                                <span className="ml-3">Logout</span>
                             </Button>
                         </div>
                     </div>
@@ -226,27 +235,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                     <div className="flex items-center">
                         {isMobile && <MobileSidebar />}
                         <h1 className="text-lg md:text-xl font-semibold truncate max-w-[180px] md:max-w-xs">
-                            {t('climateInformationSystem')}
+                            Workplan System
                         </h1>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" className="flex items-center">
-                                    <Globe className="h-4 w-4 mr-1" />
-                                    <span className="hidden md:inline">{locale === 'en' ? 'English' : 'Kinyarwanda'}</span>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => changeLanguage('en')}>
-                                    English
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => changeLanguage('rw')}>
-                                    Kinyarwanda
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-
                     </div>
                 </header>
 
