@@ -98,7 +98,6 @@ export const KanbanBoardView = ({ items, itemType = 'project' }: KanbanBoardView
     };
 
     const handleDragStart = (e: React.DragEvent, board: string, item: KanbanItem, index: number) => {
-        // Save the dragging item and its source board
         setDraggingItem(item);
         setDraggingBoard(board);
         dragItemRef.current = e.currentTarget as HTMLDivElement;
@@ -174,13 +173,11 @@ export const KanbanBoardView = ({ items, itemType = 'project' }: KanbanBoardView
             setBoards(newBoards);
         }
 
-        // Reset drag state
         setDraggingItem(null);
         setDraggingBoard(null);
         setHoveredBoard(null);
     };
 
-    // Toggle item expanded state
     const toggleItemExpanded = (itemId: string) => {
         if (expandedItem === itemId) {
             setExpandedItem(null);

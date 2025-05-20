@@ -62,14 +62,11 @@ A comprehensive project management and workplan system designed for GanzAfrica, 
    Create a `.env.local` file in the root directory with the following variables:
    ```
    DATABASE_URL=your_neon_db_url_here
-   NEXTAUTH_URL=http://localhost:3000
-   NEXTAUTH_SECRET=your_secret_here
+
    ```
 
 4. Run database migrations:
-   ```bash
-   npx prisma migrate dev
-   ```
+ 
 
 5. Run the development server:
    ```bash
@@ -106,7 +103,6 @@ yarn start
 - `/src/hooks`: Custom React hooks
 - `/src/lib`: Utility functions and configurations
 - `/src/styles`: Global CSS and styling utilities
-- `/prisma`: Prisma schema and migrations
 
 ## API Client Usage
 
